@@ -4,6 +4,10 @@ This terraform configuration sets up a complete AWS infrastructure for the EasyS
 
 ## Infrastructure Overview
 
+<div style="text-align: center;">
+  <img src="architectue.png" alt="Terraform Infrastructure">
+</div>
+
 This infrastructure solves several key challenges:
 
 - **Network Isolation**: Separate public and private subnets keep sensitive workloads protected while allowing controlled external access
