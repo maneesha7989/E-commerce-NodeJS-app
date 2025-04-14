@@ -4,7 +4,7 @@ data "aws_caller_identity" "current" {}
 module "eks" {
 
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.3"  # Upgrading from 19.15.1 to the latest version to fix deprecation warnings
+  version = "20.8.5"  # Upgrading from 19.15.1 to the latest version to fix deprecation warnings
 
   cluster_name                   = var.cluster_name
   cluster_version                = var.cluster_version
