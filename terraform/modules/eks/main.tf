@@ -42,7 +42,7 @@ module "eks" {
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
     ami_type       = "AL2023_x86_64_STANDARD"
-    instance_types = ["t2.micro"]
+    instance_types = ["t2.medium", "t3.medium"]
     disk_size      = 10
     disk_type      = "gp3"
     iops           = 3000
@@ -53,9 +53,9 @@ module "eks" {
   eks_managed_node_groups = {
     easyshop-node-group = {
       min_size     = 1
-      max_size     = 1
+      max_size     = 2
       desired_size = 1
-      instance_types = ["t2.micro"]
+      instance_types = ["t2.medium", "t3.medium"]
       capacity_type  = "SPOT"
       iam_role_additional_policies = {
         AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
