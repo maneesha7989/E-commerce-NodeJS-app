@@ -103,13 +103,7 @@ pipeline {
     }
     post {
         always {
-            script {
-                emailNotification(
-                    to: env.EMAIL_ADDRESS,
-                    attachments: ['trivy-fs-report.txt', 'trivy-image-report.txt'],
-                    stageName: 'Jenkins - EasyShop Pipeline Report'
-                )
-            }
+            emailNotification(env.EMAIL_ADDRESS, ['trivy-image-report.txt', 'trivy-fs-report.txt'])
         }
     }
 }
