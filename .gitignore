@@ -11,6 +11,7 @@
 
 # next.js
 /.next/
+.env.local
 /out/
 .next
 next-env.d.ts
