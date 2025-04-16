@@ -44,7 +44,7 @@ def get_bastion_ip(region=None):
 
 def generate_inventory(ip_addresses):
     # Create inventory file in same directory as script
-    inventory_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'inventory')
+    inventory_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'inventory.ini')
     
     with open(inventory_path, 'w') as f:
         # Write servers section
@@ -55,7 +55,7 @@ def generate_inventory(ip_addresses):
         
         # Write variables section
         f.write("[servers:vars]\n")
-        f.write("ansible_ssh_private_key_file=../terraform/modules/bastion/keys/bastion_key.pem\n")
+        f.write("ansible_ssh_private_key_file=./bastion_key.pem\n")
         f.write("ansible_python_interpreter=/usr/bin/python3\n")
     
     print(f"Created inventory file with server IP: {list(ip_addresses.values())[0]}")
