@@ -8,6 +8,8 @@
 
 EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, TypeScript, and MongoDB. It features a beautiful UI with Tailwind CSS, secure authentication, real-time cart updates, and a seamless shopping experience.
 
+If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
+
 ## ✨ Features
 
 - 🎨 Modern and responsive UI with dark mode support
