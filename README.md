@@ -10,6 +10,9 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 
 If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
 
+> ![EasyShop](./docs/assets/01-easyshop-ui.png)
+> ![EasyShop](./docs/assets/02-easyshop-ui.png)
+
 ## ✨ Features
 
 - 🎨 Modern and responsive UI with dark mode support
@@ -23,6 +26,8 @@ If you want to see the detailed procedures, on how to deploy the application hea
 - 🌙 Dark/Light theme support
 
 ## 🏗️ Architecture
+
+> ![Architecture](./docs/assets/tws-e-commerce-shop.png)
 
 EasyShop follows a three-tier architecture pattern:
 

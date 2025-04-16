@@ -41,6 +41,8 @@ If you want more details headover to [**Features - EasyShop**](./docs/01-feature
 
 ---
 
+> ![Architecture](./assets/tws-e-commerce-shop.png)
+
 ## 🏗️ Architecture
 
 Watch the full Architecture to understand the Application Workflow
