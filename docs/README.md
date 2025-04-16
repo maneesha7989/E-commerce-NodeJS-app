@@ -11,6 +11,8 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 > ![EasyShop UI](./assets/01-easyshop-ui.png)
 > ![EasyShop UI](./assets/02-easyshop-ui.png)
 
+---
+
 ## Contents
 
 - [Features](#-features)
@@ -20,6 +22,8 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 - [CI/CD Pipeline](#cicd-pipeline)
 - [Deployment](#deployment)
 - [Monitoring](#monitoring)
+
+---
 
 ## ✨ Features
 
@@ -34,6 +38,8 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 - 🌙 Dark/Light theme support
 
 If you want more details headover to [**Features - EasyShop**](./docs/01-features.md)
+
+---
 
 ## 🏗️ Architecture
 
@@ -64,6 +70,8 @@ EasyShop follows a three-tier architecture pattern:
 - CRUD Operations
 - Data Validation
 
+---
+
 ## PreRequisites
 
 Install the Pre-Requsites
@@ -73,6 +81,8 @@ Install the Pre-Requsites
 
 Installation Guide: [**Pre-Requisites**](./docs/03-pre-requisites.md)
 
+---
+
 ## Getting Started
 
 To get started with the EasyShop application setup and deployment, follow these guides:
@@ -80,6 +90,8 @@ To get started with the EasyShop application setup and deployment, follow these 
 1. [Setting up infrastructure](./docs/03-pre-requisites.md)
 2. [Jenkins CI/CD setup](./docs/04-jenkins.md)
 3. [Kubernetes deployment](./docs/05-deployment.md)
+
+---
 
 ## CI/CD Pipeline
 
@@ -95,12 +107,16 @@ EasyShop uses a modern CI/CD pipeline for automated testing, building and deploy
 - **ArgoCD**: GitOps-based Kubernetes deployment
 - For detailed setup instructions, follow our [Deployment Guide](./docs/05-deployment.md)
 
-### Pre Deployment Steps
+---
+
+## Pre Deployment Steps
 
 - Setup Cert Manager
 - Apply Ingress Nginx Controller
 
 Detailed Steps, check [Pre-Deployment Procedures](./docs/06-pre-deployment.md)
+
+---
 
 ## Deployment
 
@@ -113,6 +129,8 @@ The deployment process uses Kubernetes with ArgoCD for GitOps workflow:
 
 For detailed deployment instructions, see our [Deployment Guide](./docs/05-deployment.md).
 
+---
+
 ## Monitoring
 
 The EasyShop application is monitored using Prometheus and Grafana:
@@ -122,7 +140,9 @@ The EasyShop application is monitored using Prometheus and Grafana:
 
 For detailed setup instructions, see our [Monitoring Guide](./docs/07-monitoring.md).
 
+---
+
 ## **Congratulations!** 
-![EasyShop Website Screenshot](./public/Deployed.png)
+![EasyShop Website Screenshot](./assets/01-easyshop-ui.png)
 
 ### Your project is now deployed.
