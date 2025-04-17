@@ -24,4 +24,3 @@ spec:
             name: easyshop-service
             port:
               number: 80
-
