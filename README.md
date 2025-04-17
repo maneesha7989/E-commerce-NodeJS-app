@@ -415,7 +415,7 @@ kubectl get pods -n cert-manager
 
 > 4. **DNS Setup:** Find your DNS name from the LoadBalancer service:
 ```bash
-kubectl get svc ingress-nginx-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 > 5. Create a DNS record for your domain pointing to the LoadBalancer IP.
 > - Go to your godaddy dashboard and create a new CNAME record and map the DNS just your got in the terminal.
