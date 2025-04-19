@@ -63,6 +63,8 @@ output "access_information" {
     }
     bastion = {
       public_ip    = module.bastion.bastion_public_ip
+      convert_script = "dos2unix userdata.sh"
+      install_dos2unix = "sudo apt update -y && sudo apt install -y dos2unix"
       ssh_command  = "ssh -i ${module.bastion.bastion_key_path} ubuntu@${module.bastion.bastion_public_ip}"
       scp_command  = "scp -i ${module.bastion.bastion_key_path} modules/bastion/user_data.sh ubuntu@${module.bastion.bastion_public_ip}:~/user_data.sh"
       post_install = "After copying the script, run: chmod +x ~/user_data.sh && ./user_data.sh"
