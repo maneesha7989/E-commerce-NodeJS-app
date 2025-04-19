@@ -4,13 +4,13 @@ data "aws_caller_identity" "current" {}
 module "eks" {
 
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.5"  # Upgrading from 19.15.1 to the latest version to fix deprecation warnings
+  version = "20.8.5" # Upgrading from 19.15.1 to the latest version to fix deprecation warnings
 
-  cluster_name                   = var.cluster_name
-  cluster_version                = var.cluster_version
-  cluster_endpoint_public_access = true
+  cluster_name                    = var.cluster_name
+  cluster_version                 = var.cluster_version
+  cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
-  
+
   # Fixed addon configuration with correct names and timeouts
   cluster_addons = {
     kube-proxy = {
@@ -52,13 +52,13 @@ module "eks" {
 
   eks_managed_node_groups = {
     easyshop-node-group = {
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size       = 1
+      max_size       = 2
+      desired_size   = 1
       instance_types = ["t2.medium", "t3.medium"]
       capacity_type  = "SPOT"
       iam_role_additional_policies = {
-        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+        AmazonEBSCSIDriverPolicy     = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       }
       tags = {
@@ -78,7 +78,7 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = var.bastion_security_group_id
     }
-    
+
     ingress_nodes_443 = {
       description              = "Nodes to cluster API"
       protocol                 = "tcp"
@@ -87,7 +87,7 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = module.eks.node_security_group_id
     }
-    
+
     ingress_load_balancer_443 = {
       description = "Load balancer to cluster API"
       protocol    = "tcp"
@@ -107,7 +107,7 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = var.bastion_security_group_id
     }
-    
+
     ingress_bastion_kubelet = {
       description              = "Bastion to nodes kubelet API"
       protocol                 = "tcp"
@@ -116,7 +116,7 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = var.bastion_security_group_id
     }
-    
+
     ingress_cluster_kubelet = {
       description              = "Cluster to nodes kubelet API"
       protocol                 = "tcp"
@@ -125,7 +125,7 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = module.eks.cluster_security_group_id
     }
-    
+
     ingress_nodeport_tcp = {
       description = "Kubernetes NodePort Range"
       protocol    = "tcp"
@@ -134,7 +134,7 @@ module "eks" {
       type        = "ingress"
       cidr_blocks = ["0.0.0.0/0"]
     }
-    
+
     ingress_self_all = {
       description = "Node to node all ports/protocols"
       protocol    = "-1"
@@ -143,14 +143,14 @@ module "eks" {
       type        = "ingress"
       self        = true
     }
-    
+
     egress_all = {
-      description      = "Node all egress"
-      protocol         = "-1"
-      from_port        = 0
-      to_port          = 0
-      type             = "egress"
-      cidr_blocks      = ["0.0.0.0/0"]
+      description = "Node all egress"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "egress"
+      cidr_blocks = ["0.0.0.0/0"]
     }
   }
 
@@ -160,27 +160,27 @@ module "eks" {
     current_user = {
       kubernetes_groups = []
       principal_arn     = data.aws_caller_identity.current.arn
-      
+
       policy_associations = {
         admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
-            type       = "cluster"
+            type = "cluster"
           }
         }
       }
     }
-    
+
     # Grant bastion role access to the cluster
     bastion_role = {
       kubernetes_groups = []
       principal_arn     = var.bastion_role_arn
-      
+
       policy_associations = {
         admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
-            type       = "cluster"
+            type = "cluster"
           }
         }
       }

@@ -51,20 +51,20 @@ output "access_information" {
   description = "Access information for the infrastructure"
   value = {
     vpc = {
-      id = module.vpc.vpc_id
-      cidr = local.vpc_cidr
-      public_subnets = module.vpc.public_subnets
+      id              = module.vpc.vpc_id
+      cidr            = local.vpc_cidr
+      public_subnets  = module.vpc.public_subnets
       private_subnets = module.vpc.private_subnets
     }
     eks = {
-      cluster_name = local.cluster_name
-      endpoint = module.eks.cluster_endpoint
+      cluster_name   = local.cluster_name
+      endpoint       = module.eks.cluster_endpoint
       kubeconfig_cmd = "aws eks update-kubeconfig --region ${local.region} --name ${local.cluster_name}"
     }
     bastion = {
-      public_ip = module.bastion.bastion_public_ip
-      ssh_command = "ssh -i ${module.bastion.bastion_key_path} ubuntu@${module.bastion.bastion_public_ip}"
-      scp_command = "scp -i ${module.bastion.bastion_key_path} modules/bastion/user_data.sh ubuntu@${module.bastion.bastion_public_ip}:~/user_data.sh"
+      public_ip    = module.bastion.bastion_public_ip
+      ssh_command  = "ssh -i ${module.bastion.bastion_key_path} ubuntu@${module.bastion.bastion_public_ip}"
+      scp_command  = "scp -i ${module.bastion.bastion_key_path} modules/bastion/user_data.sh ubuntu@${module.bastion.bastion_public_ip}:~/user_data.sh"
       post_install = "After copying the script, run: chmod +x ~/user_data.sh && ./user_data.sh"
     }
   }

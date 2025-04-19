@@ -1,11 +1,11 @@
 locals {
 
-  region          = "us-east-2"
-  environment     = "dev"
+  region      = "us-east-2"
+  environment = "dev"
   tags = {
-    Name          = "easyshop"
-    Environment   = "dev"
-    Terraform     = "true"
+    Name        = "easyshop"
+    Environment = "dev"
+    Terraform   = "true"
   }
 
   # VPC Variables
@@ -20,8 +20,8 @@ locals {
   cluster_name    = "easyshop-cluster"
   cluster_version = "1.29"
   eks_addons_versions = {
-    kube-proxy         = "v1.29.0-eksbuild.1"
-    vpc-cni            = "v1.29.0-eksbuild.1"
+    kube-proxy = "v1.29.0-eksbuild.1"
+    vpc-cni    = "v1.29.0-eksbuild.1"
   }
 
   # Security Group Variables

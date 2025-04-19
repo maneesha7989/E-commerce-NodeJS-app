@@ -11,8 +11,8 @@ variable "cluster_version" {
 variable "eks_addon_versions" {
   description = "Version of EKS addons to use"
   type = object({
-    kube-proxy         = string
-    vpc-cni            = string
+    kube-proxy = string
+    vpc-cni    = string
   })
 }
 
