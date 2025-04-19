@@ -10,10 +10,14 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 
 > If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
 
+> Video: ![Video Demonstration](https://www.dropbox.com/scl/fi/55gz6m88z8s1cez9ojwvl/DevOps-Hackathon.mp4?rlkey=4xjw472r6p54p96cv5ne1c815&st=io7kvmv2&dl=0)
+
 > ![EasyShop](./docs/assets/01-easyshop-ui.png)
 > ![EasyShop](./docs/assets/02-easyshop-ui.png)
 
 > If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
+
+> Video: ![Video Demonstration](https://www.dropbox.com/scl/fi/55gz6m88z8s1cez9ojwvl/DevOps-Hackathon.mp4?rlkey=4xjw472r6p54p96cv5ne1c815&st=io7kvmv2&dl=0)
 
 ## ✨ Features
 
