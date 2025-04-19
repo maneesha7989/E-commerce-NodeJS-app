@@ -15,8 +15,8 @@ spec:
     spec:
       initContainers:
         - name: wait-for-migration
-          image: mongo:5.0-alpine
-          command: ['sh', '-c', 'until mongo mongodb://mongodb-service:27017/easyshop --quiet --eval "printjson(db.getCollectionInfos())" | grep -q "products"; do echo "Waiting for migration to complete..."; sleep 5; done;']
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z mongodb-service 27017; do echo "Waiting for MongoDB to be ready..."; sleep 2; done;']
       containers:
         - name: easyshop
           image: muhammadabdullahabrar/easyshop:latest
