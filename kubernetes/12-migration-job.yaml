@@ -12,7 +12,7 @@ spec:
         command: ['sh', '-c', 'until nc -z mongodb-service 27017; do echo "Waiting for MongoDB to be ready..."; sleep 2; done;']
       containers:
       - name: migration
-        image: muhammadabdullahabrar/easyshop-migration:latest
+        image: iemafzal/easyshop-migration:latest
         imagePullPolicy: Always
         env:
         - name: MONGODB_URI
