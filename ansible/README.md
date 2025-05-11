@@ -18,6 +18,21 @@ The project consists of:
 
 ## Quick Start
 
+### Install Ansible
+
+```java
+sudo apt update && sudo apt upgrade -y
+sudo apt install software-properties-common
+
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+
+#Install Ansible
+sudo apt install ansible -y
+
+#Validate Ansible:
+ansible ---version
+```
+
 ### 1. Find Bastion Host and Generate Inventory
 
 ```bash
@@ -31,6 +46,8 @@ python main.py us-west-2
 This will:
 - Search for EC2 instances tagged as bastion hosts
 - Generate an `inventory` file with the bastion host's IP address
+
+
 
 ### 2. Run the Ansible Playbook
 
