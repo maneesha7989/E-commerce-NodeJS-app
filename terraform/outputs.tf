@@ -20,20 +20,20 @@ output "private_subnets" {
 }
 
 # EKS Outputs
-output "cluster_name" {
-  description = "Name of the EKS cluster"
-  value       = local.cluster_name
-}
+# output "cluster_name" {
+#   description = "Name of the EKS cluster"
+#   value       = local.cluster_name
+# }
 
-output "cluster_endpoint" {
-  description = "Endpoint for EKS control plane"
-  value       = module.eks.cluster_endpoint
-}
+# output "cluster_endpoint" {
+#   description = "Endpoint for EKS control plane"
+#   value       = module.eks.cluster_endpoint
+# }
 
-output "cluster_security_group_id" {
-  description = "Security group IDs attached to the cluster"
-  value       = module.eks.cluster_security_group_id
-}
+# output "cluster_security_group_id" {
+#   description = "Security group IDs attached to the cluster"
+#   value       = module.eks.cluster_security_group_id
+# }
 
 # Bastion Outputs
 output "bastion_public_ip" {
@@ -56,11 +56,11 @@ output "access_information" {
       public_subnets  = module.vpc.public_subnets
       private_subnets = module.vpc.private_subnets
     }
-    eks = {
-      cluster_name   = local.cluster_name
-      endpoint       = module.eks.cluster_endpoint
-      kubeconfig_cmd = "aws eks update-kubeconfig --region ${local.region} --name ${local.cluster_name}"
-    }
+    # eks = {
+    #   cluster_name   = local.cluster_name
+    #   endpoint       = module.eks.cluster_endpoint
+    #   kubeconfig_cmd = "aws eks update-kubeconfig --region ${local.region} --name ${local.cluster_name}"
+    # }
     bastion = {
       public_ip    = module.bastion.bastion_public_ip
       convert_script = "dos2unix userdata.sh"
