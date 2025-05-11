@@ -21,7 +21,7 @@ resource "local_file" "bastion_public_key" {
 # Copy private key to Ansible folder for easy access
 resource "local_file" "ansible_bastion_private_key" {
   content         = tls_private_key.bastion.private_key_pem
-  filename        = "${path.module}/../../../ansible/bastion_key.pem"
+  filename        = "${path.module}/keys/bastion_key.pem"
   file_permission = "0400"
   depends_on      = [local_file.bastion_private_key]
 }
