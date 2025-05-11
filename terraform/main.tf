@@ -72,23 +72,22 @@ module "security_group" {
   environment = local.environment
 }
 
-module "eks" {
-  source                    = "./modules/eks"
-  cluster_name              = local.cluster_name
-  cluster_version           = local.cluster_version
-  environment               = local.environment
-  vpc_id                    = module.vpc.vpc_id
-  subnet_ids                = module.vpc.public_subnets
-  control_plane_subnet_ids  = module.vpc.private_subnets
-  bastion_security_group_id = module.security_group.bastion_security_group_id
-  bastion_role_arn          = aws_iam_role.bastion.arn
-  eks_addon_versions        = local.eks_addon_versions
-  tags                      = local.tags
-}
+# module "eks" {
+#   source                    = "./modules/eks"
+#   cluster_name              = local.cluster_name
+#   cluster_version           = local.cluster_version
+#   environment               = local.environment
+#   vpc_id                    = module.vpc.vpc_id
+#   subnet_ids                = module.vpc.public_subnets
+#   control_plane_subnet_ids  = module.vpc.private_subnets
+#   bastion_security_group_id = module.security_group.bastion_security_group_id
+#   bastion_role_arn          = aws_iam_role.bastion.arn
+#   tags                      = local.tags
+# }
 
 module "bastion" {
   source               = "./modules/bastion"
-  depends_on           = [module.eks]
+  # depends_on           = [module.eks]
   name                 = local.tags.Name
   key_name             = local.key_name
   instance_type        = local.instance_type

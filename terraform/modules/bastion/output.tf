@@ -23,12 +23,12 @@ output "bastion_key_path" {
   value       = "${path.module}/keys/bastion_key.pem"
 }
 
-output "bastion_private_key_path" {
-  description = "Path to the bastion private key"
-  value       = local_file.bastion_private_key.filename
-}
+# output "bastion_private_key_path" {
+#   description = "Path to the bastion private key"
+#   value       = local_file.bastion_private_key.filename
+# }
 
-output "bastion_public_key_path" {
-  description = "Path to the bastion public key"
-  value       = local_file.bastion_public_key.filename
-}
+# output "bastion_public_key_path" {
+#   description = "Path to the bastion public key"
+#   value       = local_file.bastion_public_key.filename
+# }
