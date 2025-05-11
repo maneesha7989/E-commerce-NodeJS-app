@@ -11,11 +11,10 @@ module "eks" {
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
-  # Fixed addon configuration with correct names and timeouts
+  # Cluster addons with automatic version selection
   cluster_addons = {
     kube-proxy = {
-      most_recent = false
-      version     = var.eks_addon_versions.kube-proxy
+      most_recent = true  
       preserve    = true
       timeouts = {
         create = "15m"
@@ -24,8 +23,25 @@ module "eks" {
       }
     }
     vpc-cni = {
-      most_recent = false
-      version     = var.eks_addon_versions.vpc-cni
+      most_recent = true  
+      preserve    = true
+      timeouts = {
+        create = "15m"
+        update = "15m"
+        delete = "10m"
+      }
+    }
+    coredns = {
+      most_recent = true  
+      preserve    = true
+      timeouts = {
+        create = "15m"
+        update = "15m"
+        delete = "10m"
+      }
+    }
+    aws-ebs-csi-driver = {
+      most_recent = true  
       preserve    = true
       timeouts = {
         create = "15m"

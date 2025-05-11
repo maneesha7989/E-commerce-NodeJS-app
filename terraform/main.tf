@@ -82,7 +82,6 @@ module "eks" {
   control_plane_subnet_ids  = module.vpc.private_subnets
   bastion_security_group_id = module.security_group.bastion_security_group_id
   bastion_role_arn          = aws_iam_role.bastion.arn
-  eks_addon_versions        = local.eks_addon_versions
   tags                      = local.tags
 }
 
