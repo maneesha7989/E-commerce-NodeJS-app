@@ -151,6 +151,36 @@ chmod 700 get_helm.sh
 helm version
 ```
 
+### 6. Ansible (Optional)
+
+Ansible is an optional automation tool that can help with configuration management, application deployment, and task automation.
+
+#### Installation Steps
+
+**For Windows:**
+Windows Subsystem for Linux (WSL) is recommended for running Ansible on Windows.
+
+**For macOS:**
+```bash
+brew install ansible
+```
+
+**For Linux:**
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible -y
+```
+
+#### Verify Installation
+
+```bash
+ansible --version
+```
+
+> **Note:** Ansible is not compulsory for the basic deployment but provides extended functionality for automation tasks.
+
 ## AWS Account Setup
 
 ### 1. IAM User Creation
