@@ -1,6 +1,8 @@
 - name: Update System
-  apt:
-    update_cache: yes
+  shell: |
+    apt-get update
+    apt-get upgrade -y
+  when: ansible_os_family == "Debian"
 
 - name: Update and Commom Tools
   apt:

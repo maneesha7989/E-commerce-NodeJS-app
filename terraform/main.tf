@@ -1,8 +1,8 @@
 locals {
   eks_addon_versions = {
-    coredns       = "v1.10.1-eksbuild.1"
-    kube-proxy    = "v1.27.3-eksbuild.1"
-    vpc-cni       = "v1.12.6-eksbuild.1"
+    coredns            = "v1.10.1-eksbuild.1"
+    kube-proxy         = "v1.27.3-eksbuild.1"
+    vpc-cni            = "v1.12.6-eksbuild.1"
     aws-ebs-csi-driver = "v1.16.0-eksbuild.1"
   }
 }
@@ -53,7 +53,7 @@ resource "aws_iam_instance_profile" "bastion" {
 }
 
 module "vpc" {
-  source = "./modules/vpc"
+  source          = "./modules/vpc"
   vpc_name        = local.vpc_name
   vpc_cidr        = local.vpc_cidr
   azs             = local.azs
@@ -64,7 +64,7 @@ module "vpc" {
 }
 
 module "security_group" {
-  source = "./modules/security_group"
+  source      = "./modules/security_group"
   name        = local.sg_name
   vpc_id      = module.vpc.vpc_id
   vpc_cidr    = local.vpc_cidr
@@ -73,7 +73,7 @@ module "security_group" {
 }
 
 module "eks" {
-  source = "./modules/eks"
+  source                    = "./modules/eks"
   cluster_name              = local.cluster_name
   cluster_version           = local.cluster_version
   environment               = local.environment
@@ -82,7 +82,6 @@ module "eks" {
   control_plane_subnet_ids  = module.vpc.private_subnets
   bastion_security_group_id = module.security_group.bastion_security_group_id
   bastion_role_arn          = aws_iam_role.bastion.arn
-  eks_addon_versions        = local.eks_addon_versions
   tags                      = local.tags
 }
 

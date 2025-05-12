@@ -34,18 +34,33 @@ This infrastructure solves several key challenges:
 
 ## Quick Start
 
+0. Folder Configuration
+   ```
+   cd terraform
+   mkdir keys
+   ```
+
 1. Initialize Terraform:
    ```
    terraform init
    ```
+2. Create SSH Keys
+   ```
+   cd keys
+   ssh-keygen -t rsa -r 2048 -f bastion_key
+   ```
 
-2. Apply the configuration:
+3. Plan the configuration:
+   ```
+   terraform plan
+   ```
+4. Apply the configuration:
    ```
    terraform apply
    ```
 
-3. Make sure you see the output properly!
-4. Connect and Execute the Script
+5. Make sure you see the output properly!
+6. Connect and Execute the Script
 
 ### Accessing the EKS Cluster
 

@@ -55,7 +55,7 @@ def generate_inventory(ip_addresses):
         
         # Write variables section
         f.write("[servers:vars]\n")
-        f.write("ansible_ssh_private_key_file=./bastion_key.pem\n")
+        f.write("ansible_ssh_private_key_file=../terraform/keys/bastion_key\n")
         f.write("ansible_python_interpreter=/usr/bin/python3\n")
     
     print(f"Created inventory file with server IP: {list(ip_addresses.values())[0]}")

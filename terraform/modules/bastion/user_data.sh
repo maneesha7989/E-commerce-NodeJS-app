@@ -1,4 +1,31 @@
 #!/bin/bash
+# IMPORTANT: This file MUST have Unix-style line endings (LF, not CRLF)
+# If edited in Windows, use an editor that supports Unix line endings
+
+# Verify we're running on Linux
+if [ "$(uname)" != "Linux" ]; then
+    echo "ERROR: This script is designed to run on Linux systems only."
+    exit 1
+fi
+
+# Auto-fix line endings if needed
+if grep -q $'\r' "$0"; then
+    echo "WARNING: Windows line endings detected, attempting to fix..."
+    if command -v dos2unix > /dev/null 2>&1; then
+        dos2unix "$0"
+        echo "Line endings fixed. Restarting script..."
+        exec bash "$0"
+        exit 0
+    else
+        echo "WARNING: dos2unix not found. Creating temporary file with correct line endings..."
+        TMP_FILE=$(mktemp)
+        tr -d '\r' < "$0" > "$TMP_FILE"
+        chmod +x "$TMP_FILE"
+        echo "Executing fixed script..."
+        exec bash "$TMP_FILE"
+        exit 0
+    fi
+fi
 
 # Exit on error
 set -e
@@ -9,7 +36,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Logging functions with colored output
+# Logging functions
 log_info() {
     echo -e "${BLUE}[INFO] ${1}${NC}"
 }

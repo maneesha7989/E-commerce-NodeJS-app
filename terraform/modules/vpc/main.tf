@@ -19,12 +19,12 @@ module "vpc" {
   # Add explicit route table configuration
   private_route_table_tags = {
     "kubernetes.io/cluster/${var.vpc_name}" = "shared"
-    "kubernetes.io/role/internal-elb"     = 1
+    "kubernetes.io/role/internal-elb"       = 1
   }
 
   public_route_table_tags = {
     "kubernetes.io/cluster/${var.vpc_name}" = "shared"
-    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/role/elb"                = 1
   }
 
   tags = var.tags
