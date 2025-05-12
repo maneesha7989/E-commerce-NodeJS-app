@@ -292,241 +292,62 @@ Applying:
 >
 > You can check it here [**Pre-Deployment Steps**](/docs/pre-deployment.md)
 
-#### **8. CD – Continuous Deployment Setup**<br/>
-**Prerequisites:**<br/>
-Before configuring CD, make sure the following tools are installed:<br/>
-* Installations Required:<br/>
-**kubectl**<br/>
-**AWS CLI**
+### Continous Deployment - CD
 
-**SSH into Bastion Server**<br/>
-* Connect to your Bastion EC2 instance via SSH.
+- ArgoCD Setup
+- Application Deployment
 
-**Note:**<br/>
-This is not the node where Jenkins is running. This is the intermediate EC2 (Bastion Host) used for accessing private resources like your EKS cluster.
+> [!IMPORTANT] 
+>
+> You can check it here [**Continous Deployment - CD**](/docs/deployment.md)
 
-**8. Configure AWS CLI on Bastion Server**
-Run the AWS configure command:<br/>
-```bash
-aws configure
-```
-Add your Access Key and Secret Key when prompted.
+### Domain Mapping
 
-**9. Update Kubeconfig for EKS**<br/>
-Run the following important command:
+1. Get the DNS Record from your LoadBalancer
 ```bash
-aws eks update-kubeconfig --region eu-west-1 --name tws-eks-cluster
-```
-* This command maps your EKS cluster with your Bastion server.
-* It helps to communicate with EKS components.
-
-**10. Argo CD Setup**<br/>
-Create a Namespace for Argo CD<br/>
-```bash
-kubectl create namespace argocd
-```
-1. Install Argo CD using Manifest
-```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-```
-2. Watch Pod Creation
-```bash
-watch kubectl get pods -n argocd
-```
-3. This helps monitor when all Argo CD pods are up and running.<br/>
-
-4. Check Argo CD Services
-```bash
-kubectl get svc -n argocd
+kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
-5. Change Argo CD Server Service to NodePort
+2. Add a CNAME Record in you Domain as `easyshop` and add the DNS Record you just got.
+
+### HTTPS Check
+
+- Check file to see whether you have Domain Mapped Correctly
+* 00-cluster-issuer.yaml
+* 04-configmap.yaml
+* 10-ingress.yaml
+
+- Check their Mapping and Change if needed.
+
+### Monitoring
+
+1. Add the Prometheus Helm repository
 ```bash
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
-```
-
-11. Access Argo CD GUI<br/>
-Check Argo CD Server Port (again, post NodePort change)<br/>
-```bash
-kubectl get svc -n argocd
-```
-1. Port Forward to Access Argo CD in Browser<br/>
- Forward Argo CD service to access the GUI:
-```bash
-kubectl port-forward svc/argocd-server -n argocd <your-port>:443 --address=0.0.0.0 &
-```
-2. Replace <your-port> with a local port of your choice (e.g., 8080).<br/>
- Now, open https://<bastion-ip>:<your-port> in your browser.
-
-
-Get the Argo CD Admin Password<br/>
-```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-```
-1. Log in to the Argo CD GUI
-* Username: admin
-* Password: (Use the decoded password from the previous command)
-
-2. Update Your Password
-* On the left panel of Argo CD GUI, click on "User Info"
-* Select Update Password and change it.
-
-### **Deploy Your Application in Argo CD GUI**<br/>
-
-> 1. On the Argo CD homepage, click on the “New App” button.<br/>
-
-> 2. Fill in the following details:<br/>
->  -  **Application Name:**
-> `Enter your desired app name`
->  -  **Project Name:**
-> Select `default` from the dropdown.
->    * **Sync Policy:**
-> Choose `Automatic`.
-
-> 3. In the `Source` section:
-> - **Repo URL:**
-> Add the Git repository URL that contains your Kubernetes manifests.
-> - **Path:** 
- `Kubernetes` (or the actual path inside the repo where your manifests reside)
-
-> 4. In the “Destination” section:
->  -  **Cluster URL:**
- https://kubernetes.default.svc (usually shown as "default")
->  -    **Namespace:**
- tws-e-commerce-app (or your desired namespace)
-
-> 5. Click on “Create”.
-
-## Nginx ingress controller:<br/>
-> 1. Install the Nginx Ingress Controller using Helm:
-```bash
-kubectl create namespace ingress-nginx
-```
-> 2. Add the Nginx Ingress Controller Helm repository:
-```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
-> 3. Install the Nginx Ingress Controller:
+
+2. Install Prometheus and Grafana stack
 ```bash
-helm install nginx-ingress ingress-nginx/ingress-nginx \
-  --namespace ingress-nginx \
-  --set controller.service.type=LoadBalancer
-```
-> 4. Check the status of the Nginx Ingress Controller:
-```bash
-kubectl get pods -n ingress-nginx
-```
-> 5. Get the external IP address of the LoadBalancer service:
-```bash
-kubectl get svc -n ingress-nginx
+helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
 ```
 
-## Install Cert-Manager
-
-> 1. **Jetpack:** Add the Jetstack Helm repository:
+3. Port-forward to access Prometheus UI
 ```bash
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring
 ```
-> 2. **Cert-Manager:** Install the Cert-Manager Helm chart:
+Access at: http://IP-ADDRESS:9090
+
+4. Port-forward to access Grafana UI
 ```bash
-helm install cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version v1.12.0 \
-  --set installCRDs=true
-``` 
-> 3. **Check pods:**Check the status of the Cert-Manager pods:
-```bash
-kubectl get pods -n cert-manager
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
 ```
+Access at: http://IP-ADDRESS:3000
+- Default username: `admin`
+- Default password: `prom-operator`
 
-> 4. **DNS Setup:** Find your DNS name from the LoadBalancer service:
-```bash
-kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-```
-> 5. Create a DNS record for your domain pointing to the LoadBalancer IP.
-> - Go to your godaddy dashboard and create a new CNAME record and map the DNS just your got in the terminal.
-
-
-### **HTTPS:**
-> #### 1. **Update your manifests to enable HTTPS:**
-> > `04-configmap.yaml`
-> > ```bash
-> > apiVersion: v1
-> > kind: ConfigMap
-> > metadata:
-> >   name: easyshop-config
-> >   namespace: easyshop
-> > data:
-> >   MONGODB_URI: "mongodb://mongodb-service:27017/easyshop"
-> >   NODE_ENV: "production"
-> >   NEXT_PUBLIC_API_URL: "https://easyshop.letsdeployit.com/api"
-> >   NEXTAUTH_URL: "https://easyshop.letsdeployit.com/"
-> >   NEXTAUTH_SECRET: "HmaFjYZ2jbUK7Ef+wZrBiJei4ZNGBAJ5IdiOGAyQegw="
-> >   JWT_SECRET: "e5e425764a34a2117ec2028bd53d6f1388e7b90aeae9fa7735f2469ea3a6cc8c"
-> > ```
-
-> #### 2. **Update your manifests to enable HTTPS:**
-> > `10-ingress.yaml`
-> > ```bash
-> > apiVersion: networking.k8s.io/v1
-> > kind: Ingress
-> > metadata:
-> >   name: easyshop-ingress
-> >   namespace: easyshop
-> >   annotations:
-> >     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-> >     kubernetes.io/ingress.class: "nginx"
-> >     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-> >     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-> > spec:
-> >   tls:
-> >   - hosts:
-> >     - easyshop.letsdeployit.com
-> >     secretName: easyshop-tls
-> >   rules:
-> >   - host: easyshop.letsdeployit.com
-> >     http:
-> >       paths:
-> >       - path: /
-> >         pathType: Prefix
-> >         backend:
-> >           service:
-> >             name: easyshop-service
-> >             port:
-> >               number: 80
-> > ```
-
-> #### 3. **Apply your manifests:**
-> ```bash
-> kubectl apply -f 00-cluster-issuer.yaml
-> kubectl apply -f 04-configmap.yaml
-> kubectl apply -f 10-ingress.yaml
-> ```
-
-> #### 4. **Commands to check the status:**
->
->> ```bash
->> kubectl get certificate -n easyshop
->> ```
-
->> ```bash
->> kubectl describe certificate easyshop-tls -n easyshop
->> ```
->
->> ```bash
->> kubectl logs -n cert-manager -l app=cert-manager
->> ```
->
->> ```bash
->> kubectl get challenges -n easyshop
->> ```
->
->> ```bash
->> kubectl describe challenges -n easyshop
->> ```
+> [!TIP]
+> Grafana comes with pre-configured dashboards for Kubernetes monitoring
 
 ## **Congratulations!** <br/>
 ![EasyShop Website Screenshot](./public/Deployed.png)
