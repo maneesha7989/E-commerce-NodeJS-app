@@ -67,34 +67,32 @@ EasyShop follows a three-tier architecture pattern:
 ## Setup & Initialization <br/>
 
 ### 1. Install Terraform
-* Install Terraform<br/>
-#### Linux & macOS
-```bash
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install terraform
-```
-### Verify Installation
-```bash
-terraform -v
-```
-### Initialize Terraform
-```bash
-terraform init
-```
+
+1. Terraform Installation
+  ```bash
+  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+  sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+  sudo apt-get update && sudo apt-get install terraform
+  ```
+
+2. Verify Installation
+  ```bash
+  terraform --version
+  ```
+
 ### 2. Install AWS CLI
 AWS CLI (Command Line Interface) allows you to interact with AWS services directly from the command line.
 
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-sudo apt install unzip
-unzip awscliv2.zip
-sudo ./aws/install
-```
+  ```bash
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  sudo apt install unzip
+  unzip awscliv2.zip
+  sudo ./aws/install
+  ```
 
- ```aws configure```
+  ```aws configure```
 
-> #### This will prompt you to enter:<br/>
+This will prompt up to enter:
 - **AWS Access Key ID:**<br/>
 - **AWS Secret Access Key:**<br/>
 - **Default region name:**<br/>
@@ -103,66 +101,119 @@ sudo ./aws/install
 > [!NOTE] 
 > Make sure the IAM user you're using has the necessary permissions. You’ll need an AWS IAM Role with programmatic access enabled, along with the Access Key and Secret Key.
 
+### 3. Install Ansible
+
+  ```bash
+  sudo apt update && sudo apt upgrade -y
+  sudo apt install software-properties-common
+
+  sudo add-apt-repository --yes --update ppa:ansible/ansible
+
+  sudo apt install ansible -y
+
+  ansible ---version
+  ```
+
 ## Getting Started
 
-> Follow the steps below to get your infrastructure up and running using Terraform:<br/>
+**Repository Cloning**
 
-1. **Clone the Repository:**
-First, clone this repo to your local machine:<br/>
 ```bash
-git clone https://github.com/LondheShubham153/tws-e-commerce-app.git
-cd terraform
+git clone https://github.com/Abdullah-0-3/tws-e-commerce-app.git
 ```
-2. **Generate SSH Key Pair:**
-Create a new SSH key to access your EC2 instance:
-```bash
-ssh-keygen -f terra-key
-```
-This will prompt you to create a new key file named terra-key.
+> [!NOTE]
+> If you want to headover to the Hackathon Repository check it out here [Hackathon Repository](https://github.com/LondheShubham153/tws-e-commerce-app/)
 
-3. **Private key permission:** Change your private key permission:
+---
+
+### Terraform Starter
+
+1. Go to the Terraform Folder
 ```bash
-chmod 400 terra-key
+cd terraform/
 ```
 
-4. **Initialize Terraform:**
-Initialize the Terraform working directory to download required providers:
+2. Generate Keys for Instances
 ```bash
-terraform init
+mkdir keys
+cd keys
+ssh-keygen -t rsa -r 2048 -f bastion_key
 ```
-5. **Review the Execution Plan:**
-Before applying changes, always check the execution plan:
+
+3. Create Plan for Infrastructure as Code
 ```bash
 terraform plan
 ```
-6. **Apply the Configuration:**
-Now, apply the changes and create the infrastructure:
+
+4. Provisioning Cloud Infrastructure
 ```bash
 terraform apply
 ```
-> Confirm with `yes` when prompted.
 
-7. **Access Your EC2 Instance;** <br/>
-After deployment, grab the public IP of your EC2 instance from the output or AWS Console, then connect using SSH:
+> [!NOTE]
+> A dialog box will apprear you may enter `yes` to provision your cloud resources.
+>
+> It may take up to 20 minutes to create bunch of Cloud Resources
+
+---
+
+### Ansible Configuration
+
+1. Get on Ansible Directory
 ```bash
-ssh -i terra-key ubuntu@<public-ip>
+cd ansible
 ```
-8. **Update your kubeconfig:**
-wherever you want to access your eks wheather it is yur local machine or bastion server this command will help you to interact with your eks.
+
 > [!CAUTION]
-> you need to configure aws cli first to execute this command:
+> Make sure you have installed `Python3` and installed the packages. If not then follow this
+>
+> ```bash
+> sudo apt update -y
+> sudo apt install python3
+> ```
+>
+> Confirm the Installation
+>
+> ```bash
+> python3 --version
+> ```
 
+2. Install Required Packages
 ```bash
-aws configure
+pip install -r requirements.txt
 ```
 
+3. Run the Python file
 ```bash
-aws eks --region eu-west-1 update-kubeconfig --name tws-eks-cluster
+python3 main.py
 ```
-9. **Check your cluster:**
+
+- Cross Verification
 ```bash
-kubectl get nodes
+cat inventory.ini
 ```
+Check if this IP matches to your DevOps-Bastion Server in AWS
+
+> [!NOTE]
+>
+> This Python file will connect to your AWS Account and fetch the Bastion Server IP Address which you created through Terraform along with Keys and Python Resources. 
+>
+> You may check the Python File for Labels and Region
+
+4. Ansible Playbooks
+```bash
+ansible-playbook -i inventory.ini playbook.yml
+```
+
+> Watch the `Ansible Magic Steps`
+
+It will install all the required packages and completly setup you Bastion Server.
+
+> [!TIP]
+>
+> Watch the steps closely and you will see your Instance IP, Jenkins Initial Password, and much more...
+
+---
 
 ## Jenkins Setup Steps
 > [!TIP]
