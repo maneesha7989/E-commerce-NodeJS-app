@@ -280,6 +280,18 @@ Hopefully, you will be ready for the EasyShop Application Deployment
 >
 > You can check it here [**Jenkins CI/CD Pipeline**](/docs/jenkins.md)
 
+---
+
+### Pre-Deployment Steps
+
+Applying:
+- **Kubernetes Ingress Nginx**
+- **Cert Manager Kubernetes**
+
+> [!IMPORTANT] 
+>
+> You can check it here [**Pre-Deployment Steps**](/docs/pre-deployment.md)
+
 #### **8. CD – Continuous Deployment Setup**<br/>
 **Prerequisites:**<br/>
 Before configuring CD, make sure the following tools are installed:<br/>
