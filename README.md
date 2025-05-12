@@ -99,6 +99,9 @@ This will prompt up to enter:
 - **Default output format:**<br/>
 
 > [!NOTE] 
+>
+> Save it because you will later need it
+> 
 > Make sure the IAM user you're using has the necessary permissions. You’ll need an AWS IAM Role with programmatic access enabled, along with the Access Key and Secret Key.
 
 ### 3. Install Ansible
@@ -212,6 +215,54 @@ It will install all the required packages and completly setup you Bastion Server
 > [!TIP]
 >
 > Watch the steps closely and you will see your Instance IP, Jenkins Initial Password, and much more...
+
+---
+
+### Bastion Server
+
+Fetch your `DevOps-Bastion` Server IP Address from AWS Cloud Console and Copy it
+
+- Get into your Server
+```bash
+ssh -i terraform/keys/bastion_key ubuntu@`IP ADDRESS`
+```
+
+In a few seconds you will be inside your server.
+
+Once you are in it, read the instructions
+
+```bash
+cat welcome.txt
+```
+
+> [!TIP]
+>
+> You will now have all the Packages Installed and Jenkins Server Ready through Ansible
+
+> [!CAUTION]
+>
+> Instance Prerequsites
+>
+> - Install AWS CLI
+> - Publish AWS Credentials
+> 
+> ```bash
+> aws configure
+> ```
+
+- Connect to EKS (Elastic Kubernetes Service)
+```bash
+aws eks update-kubeconfig --region us-east-2 --name easyshop-cluster
+```
+
+It depends on you cluster name and region
+
+- Connection Check
+```bash
+kubectl get nodes
+```
+
+Hopefully, you will be ready for the EasyShop Application Deployment
 
 ---
 
