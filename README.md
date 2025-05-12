@@ -266,110 +266,19 @@ Hopefully, you will be ready for the EasyShop Application Deployment
 
 ---
 
-## Jenkins Setup Steps
-> [!TIP]
-> Check if jenkins service is running:
+### Jenkins CI/CD Piepline
 
-```bash
-sudo systemctl status jenkins
-```
-## Steps to Access Jenkins & Install Plugins
+- Access Jenkins
+- Plugins
+- Integreation
+- Credentials
+- Packages Setup
+- Shared Library
+- Running Jenkins Pipeline
 
-#### 1. **Open Jenkins in Browser:**
-> Use your public IP with port 8080:
->**http://<public_IP>:8080**
-
-#### 2. **Initial Admin password:**
-> Start the service and get the Jenkins initial admin password:
-> ```bash
-> sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-> ```
-
-#### 3. **Start Jenkins (*If Not Running*):**
-> Get the Jenkins initial admin password:
-> ```bash
-> sudo systemctl enable jenkins
-> sudo systemctl restart jenkins
-> ```
-#### 4. **Install Essential Plugins:**
-> - Navigate to:
-> **Manage Jenkins → Plugins → Available Plugins**<br/>
-> - Search and install the following:<br/>
->   - **Docker Pipeline**<br/>
->   - **Pipeline View**
-
-
-#### 5. **Set Up Docker & GitHub Credentials in Jenkins (Global Credentials)**<br/>
+> [!IMPORTANT] 
 >
-> - GitHub Credentials:
->   - Go to:
-**Jenkins → Manage Jenkins → Credentials → (Global) → Add Credentials**
-> - Use:
->   - Kind: **Username with password**
->   - ID: **github-credentials**<br/>
-
-
-> - DockerHub Credentials:
-> Go to the same Global Credentials section
-> - Use:
->   - Kind: **Username with password**
->   - ID: **docker-hub-credentials**
-> [Notes:]
-> Use these IDs in your Jenkins pipeline for secure access to GitHub and DockerHub
-
-#### 6. Jenkins Shared Library Setup:
-> - `Configure Trusted Pipeline Library`:
->   - Go to:
-> **Jenkins → Manage Jenkins → Configure System**
-> Scroll to Global Pipeline Libraries section
->
-> - **Add a New Shared Library:** 
-> - **Name:** shared
-> - **Default Version:** main
-> - **Project Repository URL:** `https://github.com/<your user-name/jenkins-shared-libraries`.
->
-> [Notes:] 
-> Make sure the repo contains a proper directory structure eq: vars/<br/>
-	
-#### 7. Setup Pipeline<br/>
-> - Create New Pipeline Job<br/>
->   - **Name:** EasyShop<br/>
->   - **Type:** Pipeline<br/>
-> Press `Okey`<br/>
-
-> > In **General**<br/>
-> > - **Description:** EasyShop<br/>
-> > - **Check the box:** `GitHub project`<br/>
-> > - **GitHub Repo URL:** `https://github.com/<your user-name/tws-e-commerce-app`<br/>
->
-> > In **Trigger**<br/>
-> > - **Check the box:**`GitHub hook trigger for GITScm polling`<br/>
->
-> > In **Pipeline**<br/>
-> > - **Definition:** `Pipeline script from SCM`<br/>
-> > - **SCM:** `Git`<br/>
-> > - **Repository URL:** `https://github.com/<your user-name/tws-e-commerce-app`<br/>
-> > - **Credentials:** `github-credentials`<br/>
-> > - **Branch:** master<br/>
-> > - **Script Path:** `Jenkinsfile`<br/>
-
-#### **Fork Required Repos**<br/>
-> > Fork App Repo:<br/>
-> > * Open the `Jenkinsfile`<br/>
-> > * Change the DockerHub username to yours<br/>
->
-> > **Fork Shared Library Repo:**<br/>
-> > * Edit `vars/update_k8s_manifest.groovy`<br/>
-> > * Update with your `DockerHub username`<br/>
-> 
-> > **Setup Webhook**<br/>
-> > In GitHub:<br/>
-> >  * Go to **`Settings` → `Webhooks`**<br/>
-> >  * Add a new webhook pointing to your Jenkins URL<br/>
-> >  * Select: **`GitHub hook trigger for GITScm polling`** in Jenkins job<br/>
->
-> > **Trigger the Pipeline**<br/>
-> > Click **`Build Now`** in Jenkins
+> You can check it here [**Jenkins CI/CD Pipeline**](/docs/jenkins.md)
 
 #### **8. CD – Continuous Deployment Setup**<br/>
 **Prerequisites:**<br/>
