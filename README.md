@@ -8,14 +8,10 @@
 
 EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, TypeScript, and MongoDB. It features a beautiful UI with Tailwind CSS, secure authentication, real-time cart updates, and a seamless shopping experience.
 
-> If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
-
 > Video: [Watch Video Demonstration](https://www.dropbox.com/scl/fi/55gz6m88z8s1cez9ojwvl/DevOps-Hackathon.mp4?rlkey=4xjw472r6p54p96cv5ne1c815&st=io7kvmv2&dl=0)
 
 > ![EasyShop](./docs/assets/01-easyshop-ui.png)
 > ![EasyShop](./docs/assets/02-easyshop-ui.png)
-
-> If you want to see the detailed procedures, on how to deploy the application head over to [**EasyShop Deployment**](./docs/README.md)
 
 > Video: [Watch Video Demonstration](https://www.dropbox.com/scl/fi/55gz6m88z8s1cez9ojwvl/DevOps-Hackathon.mp4?rlkey=4xjw472r6p54p96cv5ne1c815&st=io7kvmv2&dl=0)
 
@@ -33,6 +29,8 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 
 ## 🏗️ Architecture
 
+> ![Architecture](./docs/assets/easyshop-architecture.png)
+> 
 > ![Architecture](./docs/assets/tws-e-commerce-shop.png)
 
 EasyShop follows a three-tier architecture pattern:
@@ -67,443 +65,287 @@ EasyShop follows a three-tier architecture pattern:
 ## Setup & Initialization <br/>
 
 ### 1. Install Terraform
-* Install Terraform<br/>
-#### Linux & macOS
-```bash
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install terraform
-```
-### Verify Installation
-```bash
-terraform -v
-```
-### Initialize Terraform
-```bash
-terraform init
-```
+
+1. Terraform Installation
+  ```bash
+  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+  sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+  sudo apt-get update && sudo apt-get install terraform
+  ```
+
+2. Verify Installation
+  ```bash
+  terraform --version
+  ```
+
 ### 2. Install AWS CLI
 AWS CLI (Command Line Interface) allows you to interact with AWS services directly from the command line.
 
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-sudo apt install unzip
-unzip awscliv2.zip
-sudo ./aws/install
-```
+  ```bash
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  sudo apt install unzip
+  unzip awscliv2.zip
+  sudo ./aws/install
+  ```
 
- ```aws configure```
+  ```aws configure```
 
-> #### This will prompt you to enter:<br/>
+This will prompt up to enter:
 - **AWS Access Key ID:**<br/>
 - **AWS Secret Access Key:**<br/>
 - **Default region name:**<br/>
 - **Default output format:**<br/>
 
 > [!NOTE] 
+>
+> Save it because you will later need it
+> 
 > Make sure the IAM user you're using has the necessary permissions. You’ll need an AWS IAM Role with programmatic access enabled, along with the Access Key and Secret Key.
+
+### 3. Install Ansible
+
+  ```bash
+  sudo apt update && sudo apt upgrade -y
+  sudo apt install software-properties-common
+
+  sudo add-apt-repository --yes --update ppa:ansible/ansible
+
+  sudo apt install ansible -y
+
+  ansible ---version
+  ```
 
 ## Getting Started
 
-> Follow the steps below to get your infrastructure up and running using Terraform:<br/>
+**Repository Cloning**
 
-1. **Clone the Repository:**
-First, clone this repo to your local machine:<br/>
 ```bash
-git clone https://github.com/LondheShubham153/tws-e-commerce-app.git
-cd terraform
+git clone https://github.com/Abdullah-0-3/tws-e-commerce-app.git
 ```
-2. **Generate SSH Key Pair:**
-Create a new SSH key to access your EC2 instance:
-```bash
-ssh-keygen -f terra-key
-```
-This will prompt you to create a new key file named terra-key.
+> [!NOTE]
+> If you want to headover to the Hackathon Repository check it out here [Hackathon Repository](https://github.com/LondheShubham153/tws-e-commerce-app/)
 
-3. **Private key permission:** Change your private key permission:
+---
+
+### Terraform Starter
+
+1. Go to the Terraform Folder
 ```bash
-chmod 400 terra-key
+cd terraform/
 ```
 
-4. **Initialize Terraform:**
-Initialize the Terraform working directory to download required providers:
+2. Generate Keys for Instances
 ```bash
-terraform init
+mkdir keys
+cd keys
+ssh-keygen -t rsa -r 2048 -f bastion_key
 ```
-5. **Review the Execution Plan:**
-Before applying changes, always check the execution plan:
+
+3. Create Plan for Infrastructure as Code
 ```bash
 terraform plan
 ```
-6. **Apply the Configuration:**
-Now, apply the changes and create the infrastructure:
+
+4. Provisioning Cloud Infrastructure
 ```bash
 terraform apply
 ```
-> Confirm with `yes` when prompted.
 
-7. **Access Your EC2 Instance;** <br/>
-After deployment, grab the public IP of your EC2 instance from the output or AWS Console, then connect using SSH:
+> [!NOTE]
+> A dialog box will apprear you may enter `yes` to provision your cloud resources.
+>
+> It may take up to 20 minutes to create bunch of Cloud Resources
+
+---
+
+### Ansible Configuration
+
+1. Get on Ansible Directory
 ```bash
-ssh -i terra-key ubuntu@<public-ip>
+cd ansible
 ```
-8. **Update your kubeconfig:**
-wherever you want to access your eks wheather it is yur local machine or bastion server this command will help you to interact with your eks.
+
 > [!CAUTION]
-> you need to configure aws cli first to execute this command:
+> Make sure you have installed `Python3` and installed the packages. If not then follow this
+>
+> ```bash
+> sudo apt update -y
+> sudo apt install python3
+> ```
+>
+> Confirm the Installation
+>
+> ```bash
+> python3 --version
+> ```
 
+2. Install Required Packages
 ```bash
-aws configure
+pip install -r requirements.txt
 ```
 
+3. Run the Python file
 ```bash
-aws eks --region eu-west-1 update-kubeconfig --name tws-eks-cluster
+python3 main.py
 ```
-9. **Check your cluster:**
+
+- Cross Verification
+```bash
+cat inventory.ini
+```
+Check if this IP matches to your DevOps-Bastion Server in AWS
+
+> [!NOTE]
+>
+> This Python file will connect to your AWS Account and fetch the Bastion Server IP Address which you created through Terraform along with Keys and Python Resources. 
+>
+> You may check the Python File for Labels and Region
+
+4. Ansible Playbooks
+```bash
+ansible-playbook -i inventory.ini playbook.yml
+```
+
+> Watch the `Ansible Magic Steps`
+
+It will install all the required packages and completly setup you Bastion Server.
+
+> [!TIP]
+>
+> Watch the steps closely and you will see your Instance IP, Jenkins Initial Password, and much more...
+
+---
+
+### Bastion Server
+
+Fetch your `DevOps-Bastion` Server IP Address from AWS Cloud Console and Copy it
+
+- Get into your Server
+```bash
+ssh -i terraform/keys/bastion_key ubuntu@`IP ADDRESS`
+```
+
+In a few seconds you will be inside your server.
+
+Once you are in it, read the instructions
+
+```bash
+cat welcome.txt
+```
+
+> [!TIP]
+>
+> You will now have all the Packages Installed and Jenkins Server Ready through Ansible
+
+> [!CAUTION]
+>
+> Instance Prerequsites
+>
+> - Install AWS CLI
+> - Publish AWS Credentials
+> 
+> ```bash
+> aws configure
+> ```
+
+- Connect to EKS (Elastic Kubernetes Service)
+```bash
+aws eks update-kubeconfig --region us-east-2 --name easyshop-cluster
+```
+
+It depends on you cluster name and region
+
+- Connection Check
 ```bash
 kubectl get nodes
 ```
 
-## Jenkins Setup Steps
+Hopefully, you will be ready for the EasyShop Application Deployment
+
+---
+
+### Jenkins CI/CD Piepline
+
+- Access Jenkins
+- Plugins
+- Integreation
+- Credentials
+- Packages Setup
+- Shared Library
+- Running Jenkins Pipeline
+
+> [!IMPORTANT] 
+>
+> You can check it here [**Jenkins CI/CD Pipeline**](/docs/jenkins.md)
+
+---
+
+### Pre-Deployment Steps
+
+Applying:
+- **Kubernetes Ingress Nginx**
+- **Cert Manager Kubernetes**
+
+> [!IMPORTANT] 
+>
+> You can check it here [**Pre-Deployment Steps**](/docs/pre-deployment.md)
+
+### Continous Deployment - CD
+
+- ArgoCD Setup
+- Application Deployment
+
+> [!IMPORTANT] 
+>
+> You can check it here [**Continous Deployment - CD**](/docs/deployment.md)
+
+### Domain Mapping
+
+1. Get the DNS Record from your LoadBalancer
+```bash
+kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+```
+
+2. Add a CNAME Record in you Domain as `easyshop` and add the DNS Record you just got.
+
+### HTTPS Check
+
+- Check file to see whether you have Domain Mapped Correctly
+* 00-cluster-issuer.yaml
+* 04-configmap.yaml
+* 10-ingress.yaml
+
+- Check their Mapping and Change if needed.
+
+### Monitoring
+
+1. Add the Prometheus Helm repository
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+2. Install Prometheus and Grafana stack
+```bash
+helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+```
+
+3. Port-forward to access Prometheus UI
+```bash
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring
+```
+Access at: http://IP-ADDRESS:9090
+
+4. Port-forward to access Grafana UI
+```bash
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
+```
+Access at: http://IP-ADDRESS:3000
+- Default username: `admin`
+- Default password: `prom-operator`
+
 > [!TIP]
-> Check if jenkins service is running:
-
-```bash
-sudo systemctl status jenkins
-```
-## Steps to Access Jenkins & Install Plugins
-
-#### 1. **Open Jenkins in Browser:**
-> Use your public IP with port 8080:
->**http://<public_IP>:8080**
-
-#### 2. **Initial Admin password:**
-> Start the service and get the Jenkins initial admin password:
-> ```bash
-> sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-> ```
-
-#### 3. **Start Jenkins (*If Not Running*):**
-> Get the Jenkins initial admin password:
-> ```bash
-> sudo systemctl enable jenkins
-> sudo systemctl restart jenkins
-> ```
-#### 4. **Install Essential Plugins:**
-> - Navigate to:
-> **Manage Jenkins → Plugins → Available Plugins**<br/>
-> - Search and install the following:<br/>
->   - **Docker Pipeline**<br/>
->   - **Pipeline View**
-
-
-#### 5. **Set Up Docker & GitHub Credentials in Jenkins (Global Credentials)**<br/>
->
-> - GitHub Credentials:
->   - Go to:
-**Jenkins → Manage Jenkins → Credentials → (Global) → Add Credentials**
-> - Use:
->   - Kind: **Username with password**
->   - ID: **github-credentials**<br/>
-
-
-> - DockerHub Credentials:
-> Go to the same Global Credentials section
-> - Use:
->   - Kind: **Username with password**
->   - ID: **docker-hub-credentials**
-> [Notes:]
-> Use these IDs in your Jenkins pipeline for secure access to GitHub and DockerHub
-
-#### 6. Jenkins Shared Library Setup:
-> - `Configure Trusted Pipeline Library`:
->   - Go to:
-> **Jenkins → Manage Jenkins → Configure System**
-> Scroll to Global Pipeline Libraries section
->
-> - **Add a New Shared Library:** 
-> - **Name:** shared
-> - **Default Version:** main
-> - **Project Repository URL:** `https://github.com/<your user-name/jenkins-shared-libraries`.
->
-> [Notes:] 
-> Make sure the repo contains a proper directory structure eq: vars/<br/>
-	
-#### 7. Setup Pipeline<br/>
-> - Create New Pipeline Job<br/>
->   - **Name:** EasyShop<br/>
->   - **Type:** Pipeline<br/>
-> Press `Okey`<br/>
-
-> > In **General**<br/>
-> > - **Description:** EasyShop<br/>
-> > - **Check the box:** `GitHub project`<br/>
-> > - **GitHub Repo URL:** `https://github.com/<your user-name/tws-e-commerce-app`<br/>
->
-> > In **Trigger**<br/>
-> > - **Check the box:**`GitHub hook trigger for GITScm polling`<br/>
->
-> > In **Pipeline**<br/>
-> > - **Definition:** `Pipeline script from SCM`<br/>
-> > - **SCM:** `Git`<br/>
-> > - **Repository URL:** `https://github.com/<your user-name/tws-e-commerce-app`<br/>
-> > - **Credentials:** `github-credentials`<br/>
-> > - **Branch:** master<br/>
-> > - **Script Path:** `Jenkinsfile`<br/>
-
-#### **Fork Required Repos**<br/>
-> > Fork App Repo:<br/>
-> > * Open the `Jenkinsfile`<br/>
-> > * Change the DockerHub username to yours<br/>
->
-> > **Fork Shared Library Repo:**<br/>
-> > * Edit `vars/update_k8s_manifest.groovy`<br/>
-> > * Update with your `DockerHub username`<br/>
-> 
-> > **Setup Webhook**<br/>
-> > In GitHub:<br/>
-> >  * Go to **`Settings` → `Webhooks`**<br/>
-> >  * Add a new webhook pointing to your Jenkins URL<br/>
-> >  * Select: **`GitHub hook trigger for GITScm polling`** in Jenkins job<br/>
->
-> > **Trigger the Pipeline**<br/>
-> > Click **`Build Now`** in Jenkins
-
-#### **8. CD – Continuous Deployment Setup**<br/>
-**Prerequisites:**<br/>
-Before configuring CD, make sure the following tools are installed:<br/>
-* Installations Required:<br/>
-**kubectl**<br/>
-**AWS CLI**
-
-**SSH into Bastion Server**<br/>
-* Connect to your Bastion EC2 instance via SSH.
-
-**Note:**<br/>
-This is not the node where Jenkins is running. This is the intermediate EC2 (Bastion Host) used for accessing private resources like your EKS cluster.
-
-**8. Configure AWS CLI on Bastion Server**
-Run the AWS configure command:<br/>
-```bash
-aws configure
-```
-Add your Access Key and Secret Key when prompted.
-
-**9. Update Kubeconfig for EKS**<br/>
-Run the following important command:
-```bash
-aws eks update-kubeconfig --region eu-west-1 --name tws-eks-cluster
-```
-* This command maps your EKS cluster with your Bastion server.
-* It helps to communicate with EKS components.
-
-**10. Argo CD Setup**<br/>
-Create a Namespace for Argo CD<br/>
-```bash
-kubectl create namespace argocd
-```
-1. Install Argo CD using Manifest
-```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-```
-2. Watch Pod Creation
-```bash
-watch kubectl get pods -n argocd
-```
-3. This helps monitor when all Argo CD pods are up and running.<br/>
-
-4. Check Argo CD Services
-```bash
-kubectl get svc -n argocd
-```
-
-5. Change Argo CD Server Service to NodePort
-```bash
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
-```
-
-11. Access Argo CD GUI<br/>
-Check Argo CD Server Port (again, post NodePort change)<br/>
-```bash
-kubectl get svc -n argocd
-```
-1. Port Forward to Access Argo CD in Browser<br/>
- Forward Argo CD service to access the GUI:
-```bash
-kubectl port-forward svc/argocd-server -n argocd <your-port>:443 --address=0.0.0.0 &
-```
-2. Replace <your-port> with a local port of your choice (e.g., 8080).<br/>
- Now, open https://<bastion-ip>:<your-port> in your browser.
-
-
-Get the Argo CD Admin Password<br/>
-```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-```
-1. Log in to the Argo CD GUI
-* Username: admin
-* Password: (Use the decoded password from the previous command)
-
-2. Update Your Password
-* On the left panel of Argo CD GUI, click on "User Info"
-* Select Update Password and change it.
-
-### **Deploy Your Application in Argo CD GUI**<br/>
-
-> 1. On the Argo CD homepage, click on the “New App” button.<br/>
-
-> 2. Fill in the following details:<br/>
->  -  **Application Name:**
-> `Enter your desired app name`
->  -  **Project Name:**
-> Select `default` from the dropdown.
->    * **Sync Policy:**
-> Choose `Automatic`.
-
-> 3. In the `Source` section:
-> - **Repo URL:**
-> Add the Git repository URL that contains your Kubernetes manifests.
-> - **Path:** 
- `Kubernetes` (or the actual path inside the repo where your manifests reside)
-
-> 4. In the “Destination” section:
->  -  **Cluster URL:**
- https://kubernetes.default.svc (usually shown as "default")
->  -    **Namespace:**
- tws-e-commerce-app (or your desired namespace)
-
-> 5. Click on “Create”.
-
-## Nginx ingress controller:<br/>
-> 1. Install the Nginx Ingress Controller using Helm:
-```bash
-kubectl create namespace ingress-nginx
-```
-> 2. Add the Nginx Ingress Controller Helm repository:
-```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-```
-> 3. Install the Nginx Ingress Controller:
-```bash
-helm install nginx-ingress ingress-nginx/ingress-nginx \
-  --namespace ingress-nginx \
-  --set controller.service.type=LoadBalancer
-```
-> 4. Check the status of the Nginx Ingress Controller:
-```bash
-kubectl get pods -n ingress-nginx
-```
-> 5. Get the external IP address of the LoadBalancer service:
-```bash
-kubectl get svc -n ingress-nginx
-```
-
-## Install Cert-Manager
-
-> 1. **Jetpack:** Add the Jetstack Helm repository:
-```bash
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
-```
-> 2. **Cert-Manager:** Install the Cert-Manager Helm chart:
-```bash
-helm install cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version v1.12.0 \
-  --set installCRDs=true
-``` 
-> 3. **Check pods:**Check the status of the Cert-Manager pods:
-```bash
-kubectl get pods -n cert-manager
-```
-
-> 4. **DNS Setup:** Find your DNS name from the LoadBalancer service:
-```bash
-kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-```
-> 5. Create a DNS record for your domain pointing to the LoadBalancer IP.
-> - Go to your godaddy dashboard and create a new CNAME record and map the DNS just your got in the terminal.
-
-
-### **HTTPS:**
-> #### 1. **Update your manifests to enable HTTPS:**
-> > `04-configmap.yaml`
-> > ```bash
-> > apiVersion: v1
-> > kind: ConfigMap
-> > metadata:
-> >   name: easyshop-config
-> >   namespace: easyshop
-> > data:
-> >   MONGODB_URI: "mongodb://mongodb-service:27017/easyshop"
-> >   NODE_ENV: "production"
-> >   NEXT_PUBLIC_API_URL: "https://easyshop.letsdeployit.com/api"
-> >   NEXTAUTH_URL: "https://easyshop.letsdeployit.com/"
-> >   NEXTAUTH_SECRET: "HmaFjYZ2jbUK7Ef+wZrBiJei4ZNGBAJ5IdiOGAyQegw="
-> >   JWT_SECRET: "e5e425764a34a2117ec2028bd53d6f1388e7b90aeae9fa7735f2469ea3a6cc8c"
-> > ```
-
-> #### 2. **Update your manifests to enable HTTPS:**
-> > `10-ingress.yaml`
-> > ```bash
-> > apiVersion: networking.k8s.io/v1
-> > kind: Ingress
-> > metadata:
-> >   name: easyshop-ingress
-> >   namespace: easyshop
-> >   annotations:
-> >     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-> >     kubernetes.io/ingress.class: "nginx"
-> >     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-> >     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-> > spec:
-> >   tls:
-> >   - hosts:
-> >     - easyshop.letsdeployit.com
-> >     secretName: easyshop-tls
-> >   rules:
-> >   - host: easyshop.letsdeployit.com
-> >     http:
-> >       paths:
-> >       - path: /
-> >         pathType: Prefix
-> >         backend:
-> >           service:
-> >             name: easyshop-service
-> >             port:
-> >               number: 80
-> > ```
-
-> #### 3. **Apply your manifests:**
-> ```bash
-> kubectl apply -f 00-cluster-issuer.yaml
-> kubectl apply -f 04-configmap.yaml
-> kubectl apply -f 10-ingress.yaml
-> ```
-
-> #### 4. **Commands to check the status:**
->
->> ```bash
->> kubectl get certificate -n easyshop
->> ```
-
->> ```bash
->> kubectl describe certificate easyshop-tls -n easyshop
->> ```
->
->> ```bash
->> kubectl logs -n cert-manager -l app=cert-manager
->> ```
->
->> ```bash
->> kubectl get challenges -n easyshop
->> ```
->
->> ```bash
->> kubectl describe challenges -n easyshop
->> ```
+> Grafana comes with pre-configured dashboards for Kubernetes monitoring
 
 ## **Congratulations!** <br/>
 ![EasyShop Website Screenshot](./public/Deployed.png)
