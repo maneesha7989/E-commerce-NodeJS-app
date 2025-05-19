@@ -30,7 +30,7 @@ sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible -y
 
 #Validate Ansible:
-ansible ---version
+ansible --version
 ```
 
 ### 1. Find Bastion Host and Generate Inventory
