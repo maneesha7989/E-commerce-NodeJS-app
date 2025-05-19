@@ -2,6 +2,7 @@ locals {
 
   region      = "us-east-2"
   environment = "dev"
+  aws_profile = "dev"
   tags = {
     Name        = "easyshop"
     Environment = "dev"
