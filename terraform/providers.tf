@@ -14,6 +14,7 @@ terraform {
 
 provider "aws" {
   region = local.region
+  profile = local.aws_profile
 
   # Add longer timeouts for EKS operations
   default_tags {
