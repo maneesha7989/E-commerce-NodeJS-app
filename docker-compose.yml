@@ -19,7 +19,7 @@ services:
 
   migration:
     build:
-      context: .
+      context: /app/migration/
       dockerfile: scripts/Dockerfile.migration
     container_name: easyshop-migration
     env_file:
