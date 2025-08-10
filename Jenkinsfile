@@ -205,7 +205,7 @@ pipeline {
       steps {
         timeout(time: 2, unit: 'HOURS') {                    //min 2hrs required for this task, fails the build if no one approves in time
           input(
-            message: "Approve Terraform APPLY to PROD?",            // need manual approval, check in Blue Ocean
+            message: "Approve Terraform APPLY to PROD?",            // need manual approval in Blue Ocean
             ok: "Approve & Continue",
             submitter: "tf-approvers,ops-leads"                 //restricts who can approve this, mapped to to Jenkins users/roles/groups
           )
@@ -238,3 +238,41 @@ pipeline {
     }
   }
 }
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+//PIPELINE: INCLUDING KUBERNETES DEPLOYMENT HEALTHCHECK IN CICD
+    
+    stage('Health Check') {
+            steps {
+                script {
+                    echo "Starting health checks for deployment ${APP_NAME} in namespace ${DEV_NAMESPACE}..."
+
+                    // 1. Wait for the rollout to complete successfully. This is the most reliable way to check deployment health.
+                    sh "kubectl rollout status deployment/${APP_NAME} -n ${STAGING_NAMESPACE} --timeout=5m"    /// this step will exit with an error if the rollout fails
+                    echo "Deployment rollout completed successfully."
+
+                    // 2. Check that pods are ready and running
+                    // We use `kubectl get pods` and a simple grep/wc to count the number of ready pods
+                    def desired_replicas = 3 // Assuming you have 3 replicas
+                    sh """
+                        # Loop until the desired number of pods are ready
+                        count=0
+                        while [ \$count -lt ${desired_replicas} ]; do
+                            count=\$(kubectl get pods -l app=${APP_NAME} -n ${STAGING_NAMESPACE} -o jsonpath='{range .items[*]}{.status.containerStatuses[*].ready}{" "}{end}' | grep -o true | wc -l)
+                            echo "\$count out of ${desired_replicas} pods are ready..."
+                            if [ \$count -eq ${desired_replicas} ]; then
+                                echo "All ${desired_replicas} pods are ready."
+                                break
+                            fi
+                            sleep 10
+                        done
+                    """
+
+                    // 3. Verify the service is available and has endpoints
+                    // This ensures the pods are reachable
+                    sh "kubectl describe service ${APP_NAME} -n ${STAGING_NAMESPACE} | grep 'Endpoints:' | grep -v '<none>'"
+                    echo "Service is available and has active endpoints."
+                }
+            }
+        }
