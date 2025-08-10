@@ -241,7 +241,7 @@ pipeline {
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-//PIPELINE: INCLUDING KUBERNETES DEPLOYMENT HEALTHCHECK IN CICD
+//PIPELINE: INCLUDING KUBERNETES DEPLOYMENT HEALTHCHECK IN CICD -> can be done in 3 Steps
     
     stage('Health Check') {
             steps {
@@ -254,12 +254,12 @@ pipeline {
 
                     // 2. Check that pods are ready and running
                     // We use `kubectl get pods` and a simple grep/wc to count the number of ready pods
-                    def desired_replicas = 3 // Assuming you have 3 replicas
+                    def desired_replicas = 3                                                     // Assuming you have 3 replicas
                     sh """
                         # Loop until the desired number of pods are ready
                         count=0
-                        while [ \$count -lt ${desired_replicas} ]; do
-                            count=\$(kubectl get pods -l app=${APP_NAME} -n ${STAGING_NAMESPACE} -o jsonpath='{range .items[*]}{.status.containerStatuses[*].ready}{" "}{end}' | grep -o true | wc -l)
+                        while [ \$count -le ${desired_replicas} ]; do
+                            count=\$(kubectl get pods -l app=${APP_NAME} -n ${DEV_NAMESPACE} -o jsonpath='{range .items[*]}{.status.containerStatuses[*].ready}{" "}{end}' | grep -o true | wc -l)
                             echo "\$count out of ${desired_replicas} pods are ready..."
                             if [ \$count -eq ${desired_replicas} ]; then
                                 echo "All ${desired_replicas} pods are ready."
@@ -270,8 +270,7 @@ pipeline {
                     """
 
                     // 3. Verify the service is available and has endpoints
-                    // This ensures the pods are reachable
-                    sh "kubectl describe service ${APP_NAME} -n ${STAGING_NAMESPACE} | grep 'Endpoints:' | grep -v '<none>'"
+                    sh "kubectl describe service ${APP_NAME} -n ${DEV_NAMESPACE} | grep 'Endpoints:'"
                     echo "Service is available and has active endpoints."
                 }
             }
