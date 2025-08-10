@@ -32,10 +32,9 @@ COPY --from=builder /app/public ./public
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
 
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Command to run the application
-CMD ["node", "server.js"]
+ENTRYPOINT ["node", "server.js"]
