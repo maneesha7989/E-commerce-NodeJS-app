@@ -3,6 +3,11 @@
 pipeline {
     agent any
     
+    options {
+        disableConcurrentBuilds()       //prevents two builds of this same job from running at once
+        timestamps()                     //adds timestamps to log lines
+    }
+
     environment {
         // Update the main app image name to match the deployment file
         DOCKER_IMAGE_NAME = 'trainwithshubham/easyshop-app'
@@ -121,4 +126,115 @@ pipeline {
             }
         }
     }
+}
+
+pipeline {
+  agent any
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// PIPELINE: INCLUDING TERRAFORM IN CICD
+
+  parameters {
+    choice(name: 'TARGET_ENV', choices: ['dev', 'stage', 'prod'], description: 'Which environment to act on')   //Selects which environment’s Terraform code to operate on
+    booleanParam(name: 'APPLY', defaultValue: false, description: 'Apply the planned changes?')                //Controls whether this run should actually APPLY or just PLAN
+    string(name: 'TF_DIR', defaultValue: 'envs/dev/app', description: 'Path to Terraform working dir for this env') //This gets auto-adjusted later based on TARGET_ENV
+  }
+
+  environment {
+    TF_IN_AUTOMATION = 'true'
+    TF_INPUT         = 'false'
+    APP_NAME = 'my-app'
+    STAGING_NAMESPACE = 'staging'
+    PROD_NAMESPACE = 'production'
+    DOCKER_IMAGE_NAME = "my-registry/${APP_NAME}"
+    DOCKER_IMAGE_TAG = "v${env.BUILD_NUMBER}"
+  }
+
+  stages {
+    
+    stage('Set Cloud Credentials') {
+      steps {
+        script {
+          // Preferred: Jenkins agent with instance profile or IRSA (no static keys).
+          // If you must use stored creds: add “AWS credentials” in Jenkins and:
+          // withAWS(role: 'arn:aws:iam::123456789012:role/jenkins-tf-${TARGET_ENV}', roleSessionName: "jenkins-${env.BUILD_NUMBER}", duration: 3600) { ... }
+        }
+      }
+    }
+
+    stage('Init & Validate') {
+      steps {
+        dir("${env.TF_DIR}") {
+          sh 'terraform fmt -check -recursive'            //Tfm format
+          sh 'terraform init -lock-timeout=5m'            //Tfm init
+          sh 'terraform validate'                        // Tfm validate
+        }
+      }
+    }
+
+    stage('Plan') {
+      steps {
+        dir("${env.TF_DIR}") {
+          // serialize plans/applies per env to avoid overlapping locks
+          lock(resource: "tf-${params.TARGET_ENV}") {
+            sh 'terraform plan -lock-timeout=5m -out=plan.bin'                //stores Tfm PLAN output in a Binary file
+            sh 'terraform show -no-color plan.bin > plan.txt'                //produces a human-readable file for review
+          }
+        }
+          //Both plan.bin and plan.txt are archived as build artifacts so reviewers don’t have to download artifacts at later point of time
+        archiveArtifacts artifacts: "${env.TF_DIR}/plan.bin, ${env.TF_DIR}/plan.txt", onlyIfSuccessful: true    
+      }
+        
+      post {
+        success {
+          script {
+            def plan = readFile("${env.TF_DIR}/plan.txt")                            //reading and displaying the PLAN file
+            echo "---- Terraform Plan (truncated) ----\n" + plan.take(2000)
+          }
+        }
+      }
+    }
+
+    stage('Approval (Prod only)') {
+      when {
+        allOf {                                            //block executes only when ALL OF below conditions are true
+          expression { params.APPLY == true }
+          expression { params.TARGET_ENV == 'prod' }
+        }
+      }
+      steps {
+        timeout(time: 2, unit: 'HOURS') {                    //min 2hrs required for this task, fails the build if no one approves in time
+          input(
+            message: "Approve Terraform APPLY to PROD?",            // need manual approval, check in Blue Ocean
+            ok: "Approve & Continue",
+            submitter: "tf-approvers,ops-leads"                 //restricts who can approve this, mapped to to Jenkins users/roles/groups
+          )
+        }
+      }
+    }
+
+    stage('Apply') {
+      when { expression { params.APPLY == true } }
+      steps {
+          dir("${env.TF_DIR}") {                                                // to ensure we’re applying the exact PLAN from this build
+          lock(resource: "tf-${params.TARGET_ENV}") {
+            copyArtifacts(projectName: env.JOB_NAME, selector: specific("${env.BUILD_NUMBER}"), filter: "${env.TF_DIR}/plan.bin")        // pulls the exact plan.bin created earlier by this same build number build
+            sh 'ls -al'
+            sh 'terraform apply -lock-timeout=5m -auto-approve plan.bin'        //Tfm APPLY command executes on Plan.bin which was reviewed
+            sh 'terraform output -json > outputs.json || true'                    //Tfm Outputs are exported to outputs.json
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      archiveArtifacts artifacts: "${env.TF_DIR}/outputs.json", allowEmptyArchive: true        // archives outputs for traceability/integration
+      echo "Done. Plan and any outputs archived."
+    }
+    always {
+      // Optionally notify Slack/Teams, attach plan summary, etc.        
+    }
+  }
 }
